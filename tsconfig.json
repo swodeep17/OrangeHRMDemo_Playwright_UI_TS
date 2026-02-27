@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",        // ← VERY IMPORTANT
+    //"module": "ESNext", //comment this  and avoid in production if- team is large, 
+    "module": "CommonJS",
+    "allowJs": true,
+    "checkJs": false,
+    "moduleDetection": "force",
+    "strict": true,
+    "moduleResolution":"node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["**/*.ts"]
+}

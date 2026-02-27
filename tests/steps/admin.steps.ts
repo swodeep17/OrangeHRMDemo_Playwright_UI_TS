@@ -1,0 +1,22 @@
+// import { createBdd } from 'playwright-bdd';
+// import { test, expect } from '../../src/fixtures/fixtures';
+// const { Given, When, Then } = createBdd(test);
+
+// Given('I am logged in as {string}', async function (role) { /* TODO */ });
+// Given('the following employees exist:', async function (dataTable) { /* TODO */ });
+// When('I assign roles and create login credentials for each employee', async function () { /* TODO */ });
+// Then('each employee should have a user account with the correct role', async function () { /* TODO */ });
+// When('I search for {string} and {string} users in the admin user table', async function (user1, user2) { /* TODO */ });
+// Then('I should see both users with correct roles', async function () { /* TODO */ });
+// Given('I am logged in as "client admin"', async function () { /* TODO */ });
+// When('I edit the details of "ESS" user', async function () { /* TODO */ });
+// Then('the changes should be saved', async function () { /* TODO */ });
+// When('I delete the "ESS" user', async function () { /* TODO */ });
+// Then('the user should be removed from the system', async function () { /* TODO */ });
+// Given('I am logged in as "super admin"', async function () { /* TODO */ });
+// When('I delete the "client admin" or "ESS" user if present', async function () { /* TODO */ });
+// Then('the user should not be present in the system', async function () { /* TODO */ });
+// When('I check the employee list in PIM and Admin', async function () { /* TODO */ });
+// Then('the deleted users should not be present', async function () { /* TODO */ });
+// When('I try to login as the deleted users', async function () { /* TODO */ });
+// Then('login should fail with an error message', async function () { /* TODO */ });
