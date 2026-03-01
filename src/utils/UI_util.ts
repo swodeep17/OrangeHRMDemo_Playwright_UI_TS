@@ -142,6 +142,13 @@ export class Windows_frames_popups_visual_Utils {
         return newPage;
     }
 
+    /*
+    Scenario                                                                Best choice                         Why
+    You click a button on the current page that opens a popup               page.waitForEvent('popup')          Strongly ties the new page to the correct opener (less flaky)
+    You’re not sure which page triggers the new tab, or any page could      context.waitForEvent('page')        Listens globally within the context
+    SSO or third‑party auth opens a new window/tab                          context.waitForEvent('page')        The opener might not be the current page
+    */
+
     static async getAllWindows(context: BrowserContext) {
         return context.pages();
     }

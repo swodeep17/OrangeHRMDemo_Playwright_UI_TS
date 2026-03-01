@@ -27,7 +27,15 @@ export class PIMPage {
   employeeImage: Locator;
   createLoginCredRadioButton: Locator;
   addEmployeeSaveButton: Locator;
-  
+
+  // Employee List table (dynamic)
+  employeeTable: Locator;
+  employeeTableHeaderCells: Locator; // all header cells (may include a blank first cell)
+  employeeTableBodyRows: Locator;    // each row card in the body
+  pagination: Locator;
+  paginationNext: Locator;
+  paginationPrev: Locator;
+
 
 
   constructor(page: Page) {
@@ -53,6 +61,21 @@ export class PIMPage {
     this.employeeImage = page.locator('.employee-image');
     this.createLoginCredRadioButton = page.locator('span.oxd-switch-input--active');
     this.addEmployeeSaveButton = page.getByRole('button', { name: /Save/i });
+    //Employee list table
+    this.employeeTable = page.locator('.oxd-table');
+    this.employeeTableHeaderCells = page.locator('.oxd-table-header .oxd-table-header-cell');// Each item (row) is usually a "card" with inner .oxd-table-row > .oxd-table-cell
+    this.employeeTableBodyRows = page.locator('.oxd-table-body .oxd-table-card');
+    //pagination
+    this.pagination = page.locator('.oxd-pagination');
+    this.paginationNext = this.pagination.getByRole('button', { name: /next/i }).or(
+      this.pagination.locator('.oxd-pagination-page-item--next button')
+    ); //using or to make the locator resilient to multiple possible DOM patterns
+    this.paginationPrev = this.pagination.getByRole('button', { name: /prev/i }).or(
+      this.pagination.locator('.oxd-pagination-page-item--previous button')
+    );
+    
+
+
 
 
 
