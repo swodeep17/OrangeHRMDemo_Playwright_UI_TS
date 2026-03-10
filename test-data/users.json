@@ -3,6 +3,6 @@
     "username": "Admin",
     "password": "admin123"
   },
-  "clientadmins": null,
+  "clientadmins": [],
   "essUsers": []
 }

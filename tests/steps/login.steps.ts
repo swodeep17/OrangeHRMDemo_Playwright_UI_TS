@@ -1,6 +1,6 @@
 // steps/login.steps.ts
 import { createBdd } from 'playwright-bdd'; //new chnage commented //19-02
-import { test, expect} from '../../src/fixtures/fixtures'; // <-- use your custom test //new change commented
+import { test, expect } from '../../src/fixtures/fixtures'; // <-- use your custom test //new change commented
 import { readUsers } from "../../src/utils/users-util";
 
 const { Given, When, Then } = createBdd(test); //commenting for new change //19-02
@@ -30,8 +30,8 @@ Given('user login as {string}', async ({ loginPage }, role: string) => {
       break;
 
     case "clientadmin":
-      if (!users.admin) throw new Error("Client admin not created yet!");
-      creds = users.admin;
+      if (!users.clientadmins.length) throw new Error("Client admin not created yet!");
+      creds = users.clientadmins[0];
       break;
 
     case "ess":

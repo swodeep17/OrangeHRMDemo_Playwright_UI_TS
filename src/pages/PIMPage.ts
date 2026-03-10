@@ -66,13 +66,15 @@ export class PIMPage {
     this.employeeTableHeaderCells = page.locator('.oxd-table-header .oxd-table-header-cell');// Each item (row) is usually a "card" with inner .oxd-table-row > .oxd-table-cell
     this.employeeTableBodyRows = page.locator('.oxd-table-body .oxd-table-card');
     //pagination
-    this.pagination = page.locator('.oxd-pagination');
-    this.paginationNext = this.pagination.getByRole('button', { name: /next/i }).or(
-      this.pagination.locator('.oxd-pagination-page-item--next button')
-    ); //using or to make the locator resilient to multiple possible DOM patterns
-    this.paginationPrev = this.pagination.getByRole('button', { name: /prev/i }).or(
-      this.pagination.locator('.oxd-pagination-page-item--previous button')
-    );
+    this.pagination = page.locator('ul[class="oxd-pagination__ul"]');
+    this.paginationNext = page.locator('.oxd-pagination-page-item.oxd-pagination-page-item--previous-next').last();
+    // this.pagination.getByRole('button', { name: /next/i }).or(
+    // this.pagination.locator('.oxd-pagination-page-item--next button')
+    // ); //using or to make the locator resilient to multiple possible DOM patterns
+    this.paginationPrev = page.locator('.oxd-pagination-page-item.oxd-pagination-page-item--previous-next').first();
+    // this.pagination.getByRole('button', { name: /prev/i }).or(
+    //   this.pagination.locator('.oxd-pagination-page-item--previous button')
+    // );
     
 
 

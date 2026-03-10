@@ -1,22 +1,51 @@
-// import { createBdd } from 'playwright-bdd';
-// import { test, expect } from '../../src/fixtures/fixtures';
-// const { Given, When, Then } = createBdd(test);
+import { createBdd } from 'playwright-bdd';
+import { test, expect } from '../../src/fixtures/fixtures';
+import { FakerDataUtil } from '../../src/utils/fakerData_util';
+import { getLastEmployeeByType, saveAdminCredentials } from "../../src/utils/users-util";
+const { Given, When, Then } = createBdd(test);
 
-// Given('I am logged in as {string}', async function (role) { /* TODO */ });
-// Given('the following employees exist:', async function (dataTable) { /* TODO */ });
-// When('I assign roles and create login credentials for each employee', async function () { /* TODO */ });
-// Then('each employee should have a user account with the correct role', async function () { /* TODO */ });
-// When('I search for {string} and {string} users in the admin user table', async function (user1, user2) { /* TODO */ });
-// Then('I should see both users with correct roles', async function () { /* TODO */ });
-// Given('I am logged in as "client admin"', async function () { /* TODO */ });
-// When('I edit the details of "ESS" user', async function () { /* TODO */ });
-// Then('the changes should be saved', async function () { /* TODO */ });
-// When('I delete the "ESS" user', async function () { /* TODO */ });
-// Then('the user should be removed from the system', async function () { /* TODO */ });
-// Given('I am logged in as "super admin"', async function () { /* TODO */ });
-// When('I delete the "client admin" or "ESS" user if present', async function () { /* TODO */ });
-// Then('the user should not be present in the system', async function () { /* TODO */ });
-// When('I check the employee list in PIM and Admin', async function () { /* TODO */ });
-// Then('the deleted users should not be present', async function () { /* TODO */ });
-// When('I try to login as the deleted users', async function () { /* TODO */ });
-// Then('login should fail with an error message', async function () { /* TODO */ });
+//Commenting this step as we need to click on add user button for every new entry in datatable
+// When('user clicks on Add user button', async ({ adminPage }) => {
+//     await adminPage.addButton.click();
+//     await expect(adminPage.userConfirmPassword).toBeVisible();
+
+// });
+
+When('user map roles for existing employee and create credentials', async ({ adminPage }, dataTable) => {
+
+    await adminPage.addButton.click();
+    await expect(adminPage.userConfirmPassword).toBeVisible();
+
+    const rows = dataTable.hashes();
+
+    for (const row of rows) {
+
+        const role = row.role.trim();  // "clientadmin" or "ess"
+        const username = row.username.trim();
+        const password = row.password.trim();
+        const status = row.status.trim();
+
+
+        //Get Employee from JSON
+        const employee = getLastEmployeeByType(role);
+        if (!employee) {
+            throw new Error(`No employee found for role '${role}'`);
+        }
+
+        const fullname = `${employee.firstName} ${employee.lastName}`;
+
+        //Fill the Admin UI details
+        await adminPage.selectRole(role);
+        await adminPage.selectStatus(status);
+
+        await adminPage.searchAndSelectEmployee(fullname);
+
+        await adminPage.usernameInput.fill(username);
+        await adminPage.userPassword.fill(password);
+        await adminPage.userConfirmPassword.fill(password);
+
+        await adminPage.saveUserAndWait("Successfully Saved");
+        saveAdminCredentials(fullname, username, password);
+    }
+
+});

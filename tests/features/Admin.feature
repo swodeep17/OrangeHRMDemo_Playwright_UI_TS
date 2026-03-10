@@ -1,8 +1,30 @@
-# Feature: User and role management in Admin
+Feature: User and role management in Admin module
+
+  Background:
+    Given user login as "superadmin"
+
+  @employeeRoleMapping
+  Scenario: Create credentials for employees and assign roles
+    When user navigates to "Admin" module
+    # And user clicks on Add user button #Commenting this step as we need to click on add user button for every new entry in datatable
+    And user map roles for existing employee and create credentials
+      | role        | status  | username    | password     |
+      | clientadmin | Enabled | dipu17admin | Snow@110029  |
+      | ess         | Enabled | sahoo17ess  | Password@123 |
+  
+
+
+
+
+
+
+
+
+
 
 # test1
-  # Background:
-  #   Given user login as "superadmin"
+# Background:
+#   Given user login as "superadmin"
 
 #   Scenario: Assign roles and create login credentials for employees
 #     Given the following employees exist:
@@ -35,18 +57,18 @@
 #     Then login should fail with an error message
 
 #test1
-  # @mapUser
-  # Scenario Outline: Map newly created employee to System User as <role>
-  #   When user navigates to "Admin" module
-  #   And user clicks on "Add User"
-  #   And user selects role "<role>"
-  #   And user searches and selects employee stored from previous scenario
-  #   And user enters username "<username>"
-  #   And user enters password "Password@123"
-  #   And user saves the admin user
-  #   Then the user "<username>" should appear in Admin User List
+# @mapUser
+# Scenario Outline: Map newly created employee to System User as <role>
+#   When user navigates to "Admin" module
+#   And user clicks on "Add User"
+#   And user selects role "<role>"
+#   And user searches and selects employee stored from previous scenario
+#   And user enters username "<username>"
+#   And user enters password "Password@123"
+#   And user saves the admin user
+#   Then the user "<username>" should appear in Admin User List
 
-  #   Examples:
-  #     | role   | username    |
-  #     | Admin  | john.admin  |
-  #     | ESS    | rahul.ess   |
+#   Examples:
+#     | role   | username    |
+#     | Admin  | john.admin  |
+#     | ESS    | rahul.ess   |

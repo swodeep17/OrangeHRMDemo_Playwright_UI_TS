@@ -39,6 +39,7 @@ When('user clicks on {string}', async ({ pimPage }, buttonName: string) => {
 });
 
 When('user enters employee details {string} {string} {string}', async ({ pimPage }, firstName: string, middleName: string, lastName: string) => {
+    await expect(pimPage.firstName).toBeVisible();
     await pimPage.firstName.fill(firstName);
     await pimPage.middleName.fill(middleName);
     await pimPage.lastName.fill(lastName);
@@ -58,33 +59,38 @@ When('user generate EmployeeId for  the employee', async ({ pimPage }) => {
 
 });
 
-When('user saves the details', async ({ pimPage }, testInfo) => {
+When('user saves the details for {string}', async ({pimPage, dashboardPage}, usertype: string) => {
+
+//When('user saves the details for {string}', async ({ pimPage, dashboardPage }, userType: 'clientadmin' | 'ess') => {
     await pimPage.addEmployeeSaveButton.click();
-    await expect(pimPage.firstName).toBeHidden(); //Element is still in DOM but not visible
-    await expect(pimPage.firstName).not.toBeVisible(); //element cannot be seen on UI
+    // await expect(pimPage.firstName).toBeHidden(); //Element is still in DOM but not visible
+    // await expect(pimPage.firstName).not.toBeVisible(); //element cannot be seen on UI
     //await pimPage.firstName.waitFor({ state: 'detached' }); //Element is completely removed from DOM, but it is not an assertion
 
     //await expect(pimPage.firstName).toBeDetached(); //This will not work
     // Infer userType from the Scenario Outline title:
     // e.g., "Create employee as clientadmin and validate in PIM Employee List"
-    const title = (testInfo.title || '').toLowerCase();
-    let userType: 'clientadmin' | 'ess' | undefined;
+    await dashboardPage.saveUserAndWait("Successfully Saved");
+    // await pimPage.employeeList.click();
+
+  //  const title = (testInfo.title || '').toLowerCase();
+   // let userType: 'clientadmin' | 'ess' | undefined;
 
 
-    if (title.includes('create employee as clientadmin')) userType = 'clientadmin';
-    else if (title.includes('create employee as ess')) userType = 'ess';
+    // if (title.includes('create employee as clientadmin')) userType = 'clientadmin';
+    // else if (title.includes('create employee as ess')) userType = 'ess';
 
-    //in the below check $testinfo part in below as it not separately detecting
-    if (!userType) {
-        throw new Error
-            (
-                `Could not infer userType from scenario title: "${testInfo.title}". ` +
-                `Make sure your Scenario Outline starts with "Create employee as <userType>" ...`
-            );
+    // //in the below check $testinfo part in below as it not separately detecting
+    // if (!userType) {
+    //     throw new Error
+    //         (
+    //             `Could not infer userType from scenario title: "${testInfo.title}". ` +
+    //             `Make sure your Scenario Outline starts with "Create employee as <userType>" ...`
+    //         );
 
-    }
+    // }
 
-    currentEmployee.userType = userType;
+    currentEmployee.userType = (usertype.toLowerCase() as 'clientadmin' | 'ess');
 
 
     // Validate data before persisting
@@ -93,20 +99,28 @@ When('user saves the details', async ({ pimPage }, testInfo) => {
     }
 
     // Persist to users.json in the correct array
-    saveEmployeeByType(userType, {
+    saveEmployeeByType(currentEmployee.userType, {
         firstName: currentEmployee.firstName,
         middleName: currentEmployee.middleName || '',
         lastName: currentEmployee.lastName,
         employeeId: currentEmployee.employeeId
     });
+    await pimPage.employeeList.click();
 
 
 });
 
+// When('user clicks on Employee List', async ({pimPage}) => {
+//   pimPage.employeeList.click();
+
+
+// });
+
 Then('employee {string} {string} should appear in Employee List with the matching employee id', async ({ pimPage }, firstName: string, lastName: string) => {
     //Navuigating to employee list
     await pimPage.employeeList.click();
-    await expect(pimPage.employeeTable).toBeVisible();
+    //await expect(pimPage.employeeTable).toBeVisible();
+    await pimPage.employeeTableBodyRows.last().waitFor({state:'visible',timeout:10_000});
 
     if (!currentEmployee.userType) {
         // If userType not set for some reason, derive again from the composed name (fallback)
@@ -119,6 +133,10 @@ Then('employee {string} {string} should appear in Employee List with the matchin
         throw new Error(`No saved employee found in users.json for type: ${currentEmployee.userType}`);
     }
 
+
+    const expectedFullName = `${firstName} ${lastName}`;
+    const expectedId = savedEmp.employeeId;
+
     //Handle pagination
     let found = false;
 
@@ -129,7 +147,7 @@ Then('employee {string} {string} should appear in Employee List with the matchin
             const idCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(1).innerText();
             const nameCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(2).innerText();
 
-            if (nameCell.trim() === `${firstName}${lastName}` && idCell.trim() === savedEmp) {
+            if (nameCell.trim() === expectedFullName && idCell.trim() === expectedId) {
                 found = true;
                 break;
             }
