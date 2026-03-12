@@ -59,9 +59,9 @@ When('user generate EmployeeId for  the employee', async ({ pimPage }) => {
 
 });
 
-When('user saves the details for {string}', async ({pimPage, dashboardPage}, usertype: string) => {
+When('user saves the details for {string}', async ({ pimPage, dashboardPage }, usertype: string) => {
 
-//When('user saves the details for {string}', async ({ pimPage, dashboardPage }, userType: 'clientadmin' | 'ess') => {
+    //When('user saves the details for {string}', async ({ pimPage, dashboardPage }, userType: 'clientadmin' | 'ess') => {
     await pimPage.addEmployeeSaveButton.click();
     // await expect(pimPage.firstName).toBeHidden(); //Element is still in DOM but not visible
     // await expect(pimPage.firstName).not.toBeVisible(); //element cannot be seen on UI
@@ -73,8 +73,8 @@ When('user saves the details for {string}', async ({pimPage, dashboardPage}, use
     await dashboardPage.saveUserAndWait("Successfully Saved");
     // await pimPage.employeeList.click();
 
-  //  const title = (testInfo.title || '').toLowerCase();
-   // let userType: 'clientadmin' | 'ess' | undefined;
+    //  const title = (testInfo.title || '').toLowerCase();
+    // let userType: 'clientadmin' | 'ess' | undefined;
 
 
     // if (title.includes('create employee as clientadmin')) userType = 'clientadmin';
@@ -120,7 +120,7 @@ Then('employee {string} {string} should appear in Employee List with the matchin
     //Navuigating to employee list
     await pimPage.employeeList.click();
     //await expect(pimPage.employeeTable).toBeVisible();
-    await pimPage.employeeTableBodyRows.last().waitFor({state:'visible',timeout:10_000});
+    await pimPage.employeeTableBodyRows.last().waitFor({ state: 'visible', timeout: 10_000 });
 
     if (!currentEmployee.userType) {
         // If userType not set for some reason, derive again from the composed name (fallback)
@@ -155,11 +155,22 @@ Then('employee {string} {string} should appear in Employee List with the matchin
         }
 
         if (!found) {
-            if (await pimPage.paginationNext.isEnabled()) {
-                await pimPage.paginationNext.click();
-            }
-            else
-                break;
+
+            //Case 1 — “Next icon NOT VISIBLE”
+            const nextVisible = await pimPage.paginationNext.isVisible().catch(() => false);
+            if (!nextVisible) break; // no next control on this page
+
+            //Case 2 — “Next icon VISIBLE but DISABLED”
+            const nextEnabled = await pimPage.paginationNext.isEnabled().catch(() => false);
+            if (!nextEnabled) break; // last page (disabled)
+
+            await pimPage.paginationNext.click();
+
+            // if (await pimPage.paginationNext.isEnabled()) {
+            //     await pimPage.paginationNext.click();
+            // }
+            // else
+            //     break;
         }
     }
 

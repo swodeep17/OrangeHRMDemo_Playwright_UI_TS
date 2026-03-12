@@ -36,6 +36,8 @@ export class PIMPage {
   paginationNext: Locator;
   paginationPrev: Locator;
 
+  spinner: Locator;
+
 
 
   constructor(page: Page) {
@@ -67,20 +69,30 @@ export class PIMPage {
     this.employeeTableBodyRows = page.locator('.oxd-table-body .oxd-table-card');
     //pagination
     this.pagination = page.locator('ul[class="oxd-pagination__ul"]');
-    this.paginationNext = page.locator('.oxd-pagination-page-item.oxd-pagination-page-item--previous-next').last();
+    //this.pagination  = page.getByRole('navigation', { name: 'Pagination' }); //this will also work
+    this.paginationNext = this.pagination.locator('i[class="oxd-icon bi-chevron-right"]');
     // this.pagination.getByRole('button', { name: /next/i }).or(
     // this.pagination.locator('.oxd-pagination-page-item--next button')
     // ); //using or to make the locator resilient to multiple possible DOM patterns
-    this.paginationPrev = page.locator('.oxd-pagination-page-item.oxd-pagination-page-item--previous-next').first();
+    this.paginationPrev = this.pagination.locator('i[class="oxd-icon bi-chevron-left"]');
     // this.pagination.getByRole('button', { name: /prev/i }).or(
     //   this.pagination.locator('.oxd-pagination-page-item--previous button')
     // );
-    
 
+    // Spinner (overlay/container)
+    this.spinner = page.locator('.oxd-loading-spinner, .oxd-loading-spinner-container');
 
+  }
+  async waitForSpinnerToDisappear(timeout = 15000) {
+    // Spinner may not appear every time; ignore if not visible within timeout
+    await this.spinner.first().waitFor({ state: 'hidden', timeout }).catch(() => { });
+  }
 
+  async waitForTableToLoad() {
+    await this.waitForSpinnerToDisappear();
 
-
+    // rows are re-rendered every page; ensure at least one is visible
+    await this.employeeTableBodyRows.first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => { });
 
   }
 }
