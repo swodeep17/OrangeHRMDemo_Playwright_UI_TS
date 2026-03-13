@@ -156,6 +156,9 @@ Then('employee {string} {string} should appear in Employee List with the matchin
 
         if (!found) {
 
+            // inside your pagination loop
+            await pimPage.waitForTableToLoad();
+
             //Case 1 — “Next icon NOT VISIBLE”
             const nextVisible = await pimPage.paginationNext.isVisible().catch(() => false);
             if (!nextVisible) break; // no next control on this page
