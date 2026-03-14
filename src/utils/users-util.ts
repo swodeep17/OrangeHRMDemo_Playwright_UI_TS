@@ -28,7 +28,8 @@ export function saveEmployeeByType(userType: string, employee: any) {
     // Keep only one client admin → always replace index 0
     users.clientadmins[0] = employee;
   } else if (type === "ess") {
-    users.essUsers.push(employee);
+    //users.essUsers.push(employee);
+    users.essUsers[0] = employee; 
   } else {
     throw new Error("Invalid userType for employee creation");
   }

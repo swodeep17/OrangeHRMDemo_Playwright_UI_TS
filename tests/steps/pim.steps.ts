@@ -2,6 +2,8 @@ import { createBdd } from 'playwright-bdd';
 import { test, expect } from '../../src/fixtures/fixtures';
 import { FakerDataUtil } from '../../src/utils/fakerData_util';
 import { saveEmployeeByType, getLastEmployeeByType } from '../../src/utils/users-util';
+import { PIMPage } from '../../src/pages/PIMPage';
+import { runWorkerHooks } from 'playwright-bdd/dist/hooks/worker';
 const { Given, When, Then } = createBdd(test);
 
 //let employeeContext;
@@ -34,7 +36,17 @@ When('user navigates to {string} module', async ({ dashboardPage, pimPage, myInf
 });
 
 When('user clicks on {string}', async ({ pimPage }, buttonName: string) => {
-    await pimPage.addEmployee.click();
+    switch (buttonName)
+    {
+    case 'Add Employee':
+        await pimPage.addEmployee.click();
+        break;
+
+    case 'Employee List':
+        await pimPage.employeeList.click();
+        break;
+    
+    }
 
 });
 
@@ -116,10 +128,11 @@ When('user saves the details for {string}', async ({ pimPage, dashboardPage }, u
 
 // });
 
-Then('employee {string} {string} should appear in Employee List with the matching employee id', async ({ pimPage }, firstName: string, lastName: string) => {
+Then('employee {string} {string} should appear in Employee List with the matching employee id', async ({ pimPage }, firstName: string, middleName: string) => {
     //Navuigating to employee list
     await pimPage.employeeList.click();
     //await expect(pimPage.employeeTable).toBeVisible();
+    await pimPage.waitForSpinnerToDisappear();
     await pimPage.employeeTableBodyRows.last().waitFor({ state: 'visible', timeout: 10_000 });
 
     if (!currentEmployee.userType) {
@@ -134,7 +147,8 @@ Then('employee {string} {string} should appear in Employee List with the matchin
     }
 
 
-    const expectedFullName = `${firstName} ${lastName}`;
+    //const expectedFullName = `${firstName} ${lastName}`;
+    const expectedfirstMiddleCell = `${firstName} ${middleName}`;
     const expectedId = savedEmp.employeeId;
 
     //Handle pagination
@@ -144,10 +158,13 @@ Then('employee {string} {string} should appear in Employee List with the matchin
         const count = await pimPage.employeeTableBodyRows.count();
 
         for (let i = 0; i < count; i++) {
-            const idCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(1).innerText();
-            const nameCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(2).innerText();
+            const row = pimPage.employeeTableBodyRows.nth(i);
+            const idCell = await row.locator('.oxd-table-cell').nth(1).innerText();
+            const nameCell = await row.locator('.oxd-table-cell').nth(2).innerText();
+            // const idCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(1).innerText();
+            // const nameCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(2).innerText();
 
-            if (nameCell.trim() === expectedFullName && idCell.trim() === expectedId) {
+            if (nameCell.trim() === expectedfirstMiddleCell && idCell.trim() === expectedId) {
                 found = true;
                 break;
             }
@@ -157,7 +174,7 @@ Then('employee {string} {string} should appear in Employee List with the matchin
         if (!found) {
 
             // inside your pagination loop
-            await pimPage.waitForTableToLoad();
+            // await pimPage.waitForTableToLoad();
 
             //Case 1 — “Next icon NOT VISIBLE”
             const nextVisible = await pimPage.paginationNext.isVisible().catch(() => false);
@@ -169,6 +186,8 @@ Then('employee {string} {string} should appear in Employee List with the matchin
 
             await pimPage.paginationNext.click();
 
+            await pimPage.waitForTableToLoad();
+
             // if (await pimPage.paginationNext.isEnabled()) {
             //     await pimPage.paginationNext.click();
             // }
@@ -178,9 +197,39 @@ Then('employee {string} {string} should appear in Employee List with the matchin
     }
 
 
-    expect(found, `Employee ${firstName} ${lastName} with ID ${savedEmp} not found`).toBeTruthy();
+    expect(found, `Employee ${firstName} ${middleName} with ID ${expectedId} not found`).toBeTruthy();
 
+});
 
+Then('the webtable should have the following headers:', async ({pimPage}, dataTable) => {
+    
+    await pimPage.waitForTableToLoad();
+    await pimPage.employeeTableHeaderCells.last().waitFor({ state: 'visible', timeout: 10_000 });
 
+    const expectedHeaders: string[] = dataTable.raw()[0].map((h: string) => h.trim());
+
+    const headerCount: number = await pimPage.employeeTableHeaderCells.count();
+    const actualHeaders: string[] = [];
+
+    for (let i: number = 0; i < headerCount; i++) {
+        const text: string   = await pimPage.employeeTableHeaderCells.nth(i).innerText();
+        const cleaned: string = text.trim();
+
+        //explicit string length check, no implicit coercion. for checkbox innertext length is 0 so it will not be added
+        if (cleaned.length > 0) {
+            actualHeaders.push(cleaned);
+        }
+    }
+
+    console.log('Expected headers:', expectedHeaders);
+    console.log('Actual headers:  ', actualHeaders);
+
+    for (const expected of expectedHeaders) {
+        expect(
+            actualHeaders,
+            `Header "${expected}" not found. Actual: [${actualHeaders.join(', ')}]`
+        ).toContain(expected);
+    }
+  
 });
 

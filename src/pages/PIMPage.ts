@@ -65,7 +65,7 @@ export class PIMPage {
     this.addEmployeeSaveButton = page.getByRole('button', { name: /Save/i });
     //Employee list table
     this.employeeTable = page.locator('.oxd-table');
-    this.employeeTableHeaderCells = page.locator('.oxd-table-header .oxd-table-header-cell');// Each item (row) is usually a "card" with inner .oxd-table-row > .oxd-table-cell
+    this.employeeTableHeaderCells = page.locator('.oxd-table-header-cell.oxd-padding-cell.oxd-table-th');// Each item (row) is usually a "card" with inner .oxd-table-row > .oxd-table-cell
     this.employeeTableBodyRows = page.locator('.oxd-table-body .oxd-table-card');
     //pagination
     this.pagination = page.locator('ul[class="oxd-pagination__ul"]');

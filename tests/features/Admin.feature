@@ -8,10 +8,10 @@ Feature: User and role management in Admin module
     When user navigates to "Admin" module
     # And user clicks on Add user button #Commenting this step as we need to click on add user button for every new entry in datatable
     And user map roles for existing employee and create credentials
-      | role        | status  | username    | password     |
-      | clientadmin | Enabled | dipu17admin | Snow@110029  |
-      | ess         | Enabled | sahoo17ess  | Password@123 |
-  
+      | role        | status  | employee Name   | username    | password     |
+      | clientadmin | Enabled | Dipu Ak Carter  | dipu17admin | Snow@110029  |
+      | ess         | Enabled | Sahoo Kk Sharma | sahoo17ess  | Password@123 |
+
 
 
 

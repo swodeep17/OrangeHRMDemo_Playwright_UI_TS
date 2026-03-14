@@ -3,6 +3,20 @@
     "username": "Admin",
     "password": "admin123"
   },
-  "clientadmins": [],
-  "essUsers": []
+  "clientadmins": [
+    {
+      "firstName": "Dipu",
+      "middleName": "Ak",
+      "lastName": "Carter",
+      "employeeId": "EMP-IQCY9V"
+    }
+  ],
+  "essUsers": [
+    {
+      "firstName": "Sahoo",
+      "middleName": "Kk",
+      "lastName": "Sharma",
+      "employeeId": "EMP-MXEXDL"
+    }
+  ]
 }
