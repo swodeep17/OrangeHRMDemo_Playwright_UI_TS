@@ -18,34 +18,36 @@ let currentEmployee: {
 } = {};
 
 
-When('user navigates to {string} module', async ({ dashboardPage, pimPage, myInfoPage }, moduleName: string) => {
+When('user navigates to {string} module', async ({ dashboardPage, pimPage, adminPage }, moduleName: string) => {
     switch (moduleName) {
         case 'PIM':
             await dashboardPage.pim.click();
             await expect(pimPage.pimHeader).toBeVisible();
             break;
-        case 'MyInfo':
-            await dashboardPage.myInfo.click();
+        // case 'MyInfo':
+        //     await dashboardPage.myInfo.click();
+        //     break;
+        case 'Admin':
+            await dashboardPage.admin.click();
+            await expect(adminPage.adminHeader).toBeVisible();
             break;
-        //await expect(myInfoPage) //ADD THE LOCATORS FIRST
         default:
-            throw new Error(`Module "${moduleName}" is not defined in the switch case`);
+            throw new Error(`Module ${moduleName} is not defined in the switch case`);
 
     }
 
 });
 
 When('user clicks on {string}', async ({ pimPage }, buttonName: string) => {
-    switch (buttonName)
-    {
-    case 'Add Employee':
-        await pimPage.addEmployee.click();
-        break;
+    switch (buttonName) {
+        case 'Add Employee':
+            await pimPage.addEmployee.click();
+            break;
 
-    case 'Employee List':
-        await pimPage.employeeList.click();
-        break;
-    
+        case 'Employee List':
+            await pimPage.employeeList.click();
+            break;
+
     }
 
 });
@@ -201,8 +203,8 @@ Then('employee {string} {string} should appear in Employee List with the matchin
 
 });
 
-Then('the webtable should have the following headers:', async ({pimPage}, dataTable) => {
-    
+Then('the webtable should have the following headers:', async ({ pimPage }, dataTable) => {
+
     await pimPage.waitForTableToLoad();
     await pimPage.employeeTableHeaderCells.last().waitFor({ state: 'visible', timeout: 10_000 });
 
@@ -212,7 +214,7 @@ Then('the webtable should have the following headers:', async ({pimPage}, dataTa
     const actualHeaders: string[] = [];
 
     for (let i: number = 0; i < headerCount; i++) {
-        const text: string   = await pimPage.employeeTableHeaderCells.nth(i).innerText();
+        const text: string = await pimPage.employeeTableHeaderCells.nth(i).innerText();
         const cleaned: string = text.trim();
 
         //explicit string length check, no implicit coercion. for checkbox innertext length is 0 so it will not be added
@@ -230,6 +232,6 @@ Then('the webtable should have the following headers:', async ({pimPage}, dataTa
             `Header "${expected}" not found. Actual: [${actualHeaders.join(', ')}]`
         ).toContain(expected);
     }
-  
+
 });
 

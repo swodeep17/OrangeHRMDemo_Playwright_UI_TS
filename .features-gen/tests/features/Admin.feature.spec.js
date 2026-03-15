@@ -7,9 +7,9 @@ test.describe('User and role management in Admin module', () => {
     await Given('user login as "superadmin"', null, { loginPage }); 
   });
   
-  test('Create credentials for employees and assign roles', { tag: ['@employeeRoleMapping'] }, async ({ When, And, adminPage, dashboardPage, myInfoPage, pimPage }) => { 
-    await When('user navigates to "Admin" module', null, { dashboardPage, myInfoPage, pimPage }); 
-    await And('user map roles for existing employee and create credentials', {"dataTable":{"rows":[{"cells":[{"value":"role"},{"value":"status"},{"value":"username"},{"value":"password"}]},{"cells":[{"value":"clientadmin"},{"value":"Enabled"},{"value":"dipu17admin"},{"value":"Snow@110029"}]},{"cells":[{"value":"ess"},{"value":"Enabled"},{"value":"sahoo17ess"},{"value":"Password@123"}]}]}}, { adminPage }); 
+  test('Create credentials for employees and assign roles', { tag: ['@employeeRoleMapping'] }, async ({ When, And, adminPage, dashboardPage, pimPage }) => { 
+    await When('user navigates to "Admin" module', null, { adminPage, dashboardPage, pimPage }); 
+    await And('user map roles for existing employee and create credentials', {"dataTable":{"rows":[{"cells":[{"value":"role"},{"value":"status"},{"value":"employee Name"},{"value":"username"},{"value":"password"}]},{"cells":[{"value":"clientadmin"},{"value":"Enabled"},{"value":"Dipu Ak Carter"},{"value":"dipu17admin"},{"value":"Snow@110029"}]},{"cells":[{"value":"ess"},{"value":"Enabled"},{"value":"Sahoo Kk Sharma"},{"value":"sahoo17ess"},{"value":"Password@123"}]}]}}, { adminPage }); 
   });
 
 });

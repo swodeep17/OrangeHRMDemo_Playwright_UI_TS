@@ -1,15 +1,11 @@
-//import { test as base, createBdd } from 'playwright-bdd';//commenting and new change
-
 import { test as base} from 'playwright-bdd';
 import { expect,Page} from '@playwright/test';
-//import {expect} from '@playwright/test'; //20-02
-//import {Page} from '@playwright/test'; //20-02
 
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { AdminPage } from '../pages/AdminPage';
 import { PIMPage } from '../pages/PIMPage';
-import { MyInfoPage } from '../pages/MyInfoPage';
+// import { MyInfoPage } from '../pages/MyInfoPage';
 
 type MyFixtures = {
   //page: Page; //new change
@@ -20,7 +16,7 @@ type MyFixtures = {
   dashboardPage: DashboardPage;
   adminPage: AdminPage;
   pimPage: PIMPage;
-  myInfoPage: MyInfoPage;
+  // myInfoPage: MyInfoPage;
 };
 
 export const test = base.extend<MyFixtures>({
@@ -59,9 +55,9 @@ await context.close();
   pimPage: async ({ page }, use) => {
     await use(new PIMPage(page));
   },
-  myInfoPage: async ({ page }, use) => {
-    await use(new MyInfoPage(page));
-  }
+  // myInfoPage: async ({ page }, use) => {
+  //   await use(new MyInfoPage(page));
+  // }
 });
 
 export { expect };// from '@playwright/test';

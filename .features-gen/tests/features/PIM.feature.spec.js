@@ -9,8 +9,8 @@ test.describe('Employee creation and validation in PIM', () => {
   
   test.describe('Create employee as <userType> and validate in PIM Employee List', () => {
 
-    test('Create employee as clientadmin and validate in PIM Employee List', { tag: ['@createEmp'] }, async ({ When, Then, And, dashboardPage, myInfoPage, pimPage }) => { 
-      await When('user navigates to "PIM" module', null, { dashboardPage, myInfoPage, pimPage }); 
+    test('Create employee as clientadmin and validate in PIM Employee List', { tag: ['@createEmp'] }, async ({ When, Then, And, adminPage, dashboardPage, pimPage }) => { 
+      await When('user navigates to "PIM" module', null, { adminPage, dashboardPage, pimPage }); 
       await And('user clicks on "Add Employee"', null, { pimPage }); 
       await And('user enters employee details "Dipu" "Ak" "Carter"', null, { pimPage }); 
       await And('user generate EmployeeId for  the employee', null, { pimPage }); 
@@ -18,8 +18,8 @@ test.describe('Employee creation and validation in PIM', () => {
       await Then('employee "Dipu" "Ak" should appear in Employee List with the matching employee id', null, { pimPage }); 
     });
 
-    test('Create employee as ess and validate in PIM Employee List', { tag: ['@createEmp'] }, async ({ When, Then, And, dashboardPage, myInfoPage, pimPage }) => { 
-      await When('user navigates to "PIM" module', null, { dashboardPage, myInfoPage, pimPage }); 
+    test('Create employee as ess and validate in PIM Employee List', { tag: ['@createEmp'] }, async ({ When, Then, And, adminPage, dashboardPage, pimPage }) => { 
+      await When('user navigates to "PIM" module', null, { adminPage, dashboardPage, pimPage }); 
       await And('user clicks on "Add Employee"', null, { pimPage }); 
       await And('user enters employee details "Sahoo" "Kk" "Sharma"', null, { pimPage }); 
       await And('user generate EmployeeId for  the employee', null, { pimPage }); 
@@ -29,8 +29,8 @@ test.describe('Employee creation and validation in PIM', () => {
 
   });
 
-  test('Validate the webtable headers', { tag: ['@pimUI'] }, async ({ When, Then, And, dashboardPage, myInfoPage, pimPage }) => { 
-    await When('user navigates to "PIM" module', null, { dashboardPage, myInfoPage, pimPage }); 
+  test('Validate the webtable headers', { tag: ['@pimUI'] }, async ({ When, Then, And, adminPage, dashboardPage, pimPage }) => { 
+    await When('user navigates to "PIM" module', null, { adminPage, dashboardPage, pimPage }); 
     await And('user clicks on "Employee List"', null, { pimPage }); 
     await Then('the webtable should have the following headers:', {"dataTable":{"rows":[{"cells":[{"value":"Id"},{"value":"First (& Middle) Name"},{"value":"Last Name"},{"value":"Job Title"},{"value":"Employment Status"},{"value":"Sub Unit"},{"value":"Supervisor"},{"value":"Actions"}]}]}}, { pimPage }); 
   });
