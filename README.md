@@ -8,48 +8,54 @@
 
 **************************************************************************************************************************************
 ## 📁 Project Structure
+```
 OrangeHRM_Playwright_BDD_TS_VS/
 │
-├── src/                               # Source — pages, fixtures, utils
+├── src/
 │   ├── fixtures/
 │   │   └── fixtures.ts                # Custom test extension (page object DI)
-│   ├── pages/                         # Page Object Model
+│   ├── pages/
 │   │   ├── LoginPage.ts               # Login locators + validLogin()
 │   │   ├── DashboardPage.ts           # Sidebar, toast, save flow helpers
 │   │   ├── AdminPage.ts               # Role mapping, dropdowns, autocomplete
 │   │   ├── PIMPage.ts                 # Employee list, add employee, pagination
 │   │   └── MyInfoPage.ts              # Skeleton (pending implementation)
 │   └── utils/
-│       ├── users-util.ts              # Read/write users.json (employees + credentials)
-│       ├── fakerData_util.ts          # Dynamic test data — EmpID, username, password
+│       ├── users-util.ts              # Read/write users.json
+│       ├── fakerData_util.ts          # Dynamic test data generation
 │       ├── UI_util.ts                 # Scroll, mouse/keyboard helpers
 │       ├── locator_util.ts            # Element interaction utilities
 │       ├── excel_util.ts              # Excel read/write via ExcelJS
 │       └── download_upload_util.ts    # File download/upload helpers
 │
-├── tests/                             # Test layer
-│   ├── features/                      # Gherkin feature files
+├── tests/
+│   ├── features/
 │   │   ├── Login.feature              # @smoke @regression @logintest
-│   │   ├── Dashboard.feature          # @dashboard — navigation & UI validation
-│   │   ├── PIM.feature                # @createEmp @pimUI — employee lifecycle
-│   │   ├── Admin.feature              # @employeeRoleMapping — role assignment
-│   │   └── MyInfo.feature             # Pending implementation
-│   ├── steps/                         # Step definitions
-│       ├── login.steps.ts             # Login as <role> → reads users.json
-│       ├── dashboard.steps.ts         # Title, avatar, sidemenu, navigation
-│       ├── pim.steps.ts               # Create employee, validate list, headers
-│       ├── admin.steps.ts             # Role mapping, credential creation
-│       └── myinfo.step.ts             # Skeleton
-│   
-├── test-data/
-│   └── users.json                     # Persisted employee + credential data
+│   │   ├── Dashboard.feature          # @dashboard
+│   │   ├── PIM.feature                # @createEmp @pimUI
+│   │   ├── Admin.feature              # @employeeRoleMapping
+│   │   └── MyInfo.feature             # Pending
+│   ├── steps/
+│   │   ├── login.steps.ts
+│   │   ├── dashboard.steps.ts
+│   │   ├── pim.steps.ts
+│   │   ├── admin.steps.ts
+│   │   └── myinfo.step.ts
+│   ├── hooks/
+│   │   └── hooks.ts
+│   └── support/
+│       └── world.ts
 │
-├── .features-gen/                     # Auto-generated spec files (do not edit)
-├── playwright.config.ts               # Playwright global config
-├── playwright-bdd.config.ts           # BDD glue — features, steps, fixtures
+├── test-data/
+│   └── users.json
+│
+├── .features-gen/                     # Auto-generated (do not edit)
+├── playwright.config.ts
+├── playwright-bdd.config.ts
 ├── tsconfig.json
 ├── package.json
-└── PLAYWRIGHT_BDD_NOTES.md            # Installation + run command reference
+└── PLAYWRIGHT_BDD_NOTES.md
+```
 
 
 **************************************************************************************************************************************
