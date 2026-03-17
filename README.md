@@ -1,4 +1,10 @@
 # OrangeHRM Playwright BDD Automation Framework
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-1.50+-2EAD33?logo=playwright&logoColor=white)
+![playwright-bdd](https://img.shields.io/badge/playwright--bdd-8.4.2-orange)
+![Cucumber](https://img.shields.io/badge/Cucumber-Gherkin-23D96C?logo=cucumber&logoColor=white)
+![Allure](https://img.shields.io/badge/Allure-Reports-brightgreen)
+
 > End-to-end UI automation for OrangeHRM using **Playwright + playwright-bdd + TypeScript**.  
 > BDD Gherkin scenarios, custom fixtures for page object injection, JSON-driven data management, and Allure reporting.
 
@@ -251,10 +257,10 @@ Each fixture is created fresh per scenario — complete isolation in parallel ru
 ## 👨‍💻 Author
 
 **Swodeep Sahoo**  
-QA Automation Engineer
+Senior QA Automation Engineer
 
-📧 mailto:swodeep17@gmail.com
-🔗 https://www.linkedin.com/in/swodeep-sahoo-110016/
+📧 [swodeep17@gmail.com](mailto:swodeep17@gmail.com)  
+🔗 [linkedin.com/in/swodeep-sahoo-110016](https://www.linkedin.com/in/swodeep-sahoo-110016/)
 
 **************************************************************************************************************************************
 
