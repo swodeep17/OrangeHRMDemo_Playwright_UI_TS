@@ -159,20 +159,36 @@ Then('employee {string} {string} should appear in Employee List with the matchin
     while (!found) {
         const count = await pimPage.employeeTableBodyRows.count();
 
-        for (let i = 0; i < count; i++) {
-            const row = pimPage.employeeTableBodyRows.nth(i);
-            const idCell = await row.locator('.oxd-table-cell').nth(1).innerText();
-            const nameCell = await row.locator('.oxd-table-cell').nth(2).innerText();
-            // const idCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(1).innerText();
-            // const nameCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(2).innerText();
+        //Using filter to match for text in webtable
+        // 1. Define the row you are looking for using .filter()
+        // We look for a row that has both the ID and the Name in its descendant cells
+        const targetRow = pimPage.employeeTableBodyRows.filter({
+            hasText: expectedId
+        }).filter({
+            hasText: expectedfirstMiddleCell
+        });
 
-            if (nameCell.trim() === expectedfirstMiddleCell && idCell.trim() === expectedId) {
-                found = true;
-                break;
-            }
-
+        // 2. Check if that specific row exists on the current page
+        if (await targetRow.count() > 0) {
+            found = true;
+            break;
         }
 
+        /*  //Without using filter
+                for (let i = 0; i < count; i++) {
+                    const row = pimPage.employeeTableBodyRows.nth(i);
+                    const idCell = await row.locator('.oxd-table-cell').nth(1).innerText();
+                    const nameCell = await row.locator('.oxd-table-cell').nth(2).innerText();
+                    // const idCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(1).innerText();
+                    // const nameCell = await pimPage.employeeTableBodyRows.locator('.oxd-table-cell').nth(2).innerText();
+        
+                    if (nameCell.trim() === expectedfirstMiddleCell && idCell.trim() === expectedId) {
+                        found = true;
+                        break;
+                    }
+        
+                }
+        */
         if (!found) {
 
             // inside your pagination loop

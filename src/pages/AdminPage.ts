@@ -150,7 +150,7 @@ export class AdminPage {
   async getToastMessage() {
 
     await this.toastMessage.waitFor({ state: 'visible', timeout: 8000 });
-    return this.toastMessage.innerText();
+    return await this.toastMessage.innerText();
   }
 
   async waitForToastToDisappear() {
