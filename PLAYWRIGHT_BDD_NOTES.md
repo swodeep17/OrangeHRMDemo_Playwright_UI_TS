@@ -101,3 +101,11 @@ git clone <repo-url>
 cd project
 
 npm install
+
+12. I have added Playwright MCP and Playwright CLI below are commands I used
+playwright mcp---- npx playwright init-agents --loop=vscode
+
+playwright cli---- npm install -g @playwright/cli@latest
+to add to dependency level other than glocal level --- npm install @playwright/cli
+After add skills --- playwright-cli install --skills
+This will create .claude folder with skills folder
