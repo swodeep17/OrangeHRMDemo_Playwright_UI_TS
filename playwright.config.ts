@@ -43,6 +43,7 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+   /* 
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -57,6 +58,47 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+  */
+
+    // ── SMOKE: @smoke tagged scenarios, chromium only, fast gate ──────────────
+    {
+      name: 'smoke',
+      grep: /@smoke/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+
+    // ── SANITY: @sanity tagged scenarios, chromium only ───────────────────────
+    {
+      name: 'sanity',
+      grep: /@sanity/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+
+    // ── REGRESSION: @regression tagged, multi-browser ─────────────────────────
+    {
+      name: 'regression-chrome',
+      grep: /@regression/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'regression-firefox',
+      grep: /@regression/,
+      use: { ...devices['Desktop Firefox'] },
+    },
+    // webkit (Safari) — uncomment when needed
+    // {
+    //   name: 'regression-webkit',
+    //   grep: /@regression/,
+    //   use: { ...devices['Desktop Safari'] },
+    // },
+
+    // ── QUARANTINE: flaky/wip tests, never fails build ─────────────────────────
+    {
+      name: 'quarantine',
+      grep: /@quarantine/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+
 
     /* Test against mobile viewports. */
     // {
