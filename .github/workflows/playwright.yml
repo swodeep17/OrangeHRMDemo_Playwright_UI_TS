@@ -37,10 +37,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
         with:
-          node-version: 18
+          node-version: 22
           cache: npm           # uses package-lock.json hash — restores node_modules from cache
       - run: npm ci            # strict install from lock file — never drifts
       - run: npx playwright install chromium --with-deps   # installs browser + OS deps
@@ -60,7 +60,7 @@ jobs:
           # AZURE_VAULT_URL: ${{ secrets.AZURE_VAULT_URL }}   # uncomment when using Azure Key Vault
 
       # ── Report upload — always runs even if tests fail ──────────────────────
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
           name: smoke-report-${{ github.run_number }}
@@ -68,7 +68,7 @@ jobs:
           retention-days: 14
 
       # ── Traces — only uploaded when tests fail, for debugging ───────────────
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         if: failure()
         with:
           name: smoke-traces-${{ github.run_number }}
@@ -91,10 +91,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium --with-deps
@@ -115,7 +115,7 @@ jobs:
           EXPECTED_ENV_URL: ${{ secrets.EXPECTED_ENV_URL }}
 
       # Upload shard blob report for merging in Job 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
           name: blob-report-shard-${{ matrix.shardIndex }}
@@ -132,21 +132,21 @@ jobs:
     # ↑ COMMENT THIS LINE OUT when regression is enabled automatically
     # Note: keeping always() below for when this re-enables — runs even if some shards failed
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: Download all shard reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.3.0
         with:
           path: all-blob-reports
           pattern: blob-report-shard-*
           merge-multiple: true
       - name: Merge reports
         run: npx playwright merge-reports --reporter html ./all-blob-reports
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: playwright-report-merged-${{ github.run_number }}
           path: playwright-report/
@@ -163,10 +163,10 @@ jobs:
     timeout-minutes: 20
     continue-on-error: true   # this job NEVER fails the overall workflow even when re-enabled
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium --with-deps

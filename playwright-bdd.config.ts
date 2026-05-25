@@ -11,5 +11,6 @@ export default defineBddConfig({
   ],
 
   // If inference still fails, this line forces the import of your custom test
-  importTestFrom: 'src/fixtures/fixtures.ts',
+  // Commenting the below line as it is not needed
+  // importTestFrom: 'src/fixtures/fixtures.ts',
 });

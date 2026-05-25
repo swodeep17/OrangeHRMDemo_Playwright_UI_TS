@@ -1,4 +1,5 @@
-import {faker} from '@faker-js/faker';
+// import {faker} from '@faker-js/faker'; //This is working on local but crashing in github actions
+const { faker } = require('@faker-js/faker');
 
 /**
  * FakerDataUtil - Generates dynamic test data for OrangeHRM Playwright automation.
