@@ -15,6 +15,7 @@ import testDir from './playwright-bdd.config'; //20-02
 
 export default defineConfig({
   //testDir: './test',
+  globalSetup: './config/global.setup.ts', //newly added
   testDir,
   timeout: 40*1000,
   expect:{

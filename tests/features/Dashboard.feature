@@ -1,4 +1,4 @@
-@dashboard
+
 Feature: Dashboard widgets and navigation by role
     Background:
         Given user login as "superadmin"
@@ -15,11 +15,13 @@ Feature: Dashboard widgets and navigation by role
     #       | superAdmin  |
 
     # tets1
+    @smoke
     Scenario: Validate dashboard headers
         Then validate page title "Dashboard" is displayed
         Then validate profile avatar icon
         And user should be able to logout
 
+    @smoke
     Scenario: Validate sidemenu and menulist items like admin, pim, myinfo are present
         Then validate side menu is displayed
         And admin option is showing in menulist

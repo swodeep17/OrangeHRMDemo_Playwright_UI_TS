@@ -6,3 +6,24 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# ─── Session storage files (contain live auth cookies — never commit) ─────────
+.sessions/
+ 
+# ─── Credentials & environment (never commit) ─────────────────────────────────
+.env
+.env.*
+!.env.example          # keep the example template in git
+ 
+# ─── Test data with credentials (written at runtime by @createEmp flow) ───────
+test-data/users.json
+ 
+# ─── Node ─────────────────────────────────────────────────────────────────────
+node_modules/
+ 
+# ─── Allure ───────────────────────────────────────────────────────────────────
+allure-results/
+allure-report/
+ 
+# ─── TypeScript build ─────────────────────────────────────────────────────────
+dist/

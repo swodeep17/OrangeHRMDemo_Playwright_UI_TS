@@ -6,9 +6,10 @@
 #   And my profile name "Admin" should be visible in the header
 #   And the correct widgets for "admin" should be visible
 
-#@ui @login @smoke @superadmin
+
 Feature: OrangeHRM Login
 
+  @smoke
   Scenario: Login as superadmin
     Given user login as "superadmin"
     Then dashboard should be visible
