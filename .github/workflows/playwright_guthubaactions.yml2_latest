@@ -1,0 +1,185 @@
+# .github/workflows/playwright.yml
+# ═══════════════════════════════════════════════════════════════════════════════
+# FILE LOCATION: .github/workflows/playwright.yml
+#
+# GitHub Actions CI pipeline — mirrors the Jenkinsfile logic.
+# Credentials come from GitHub Secrets (Settings → Secrets → Actions).
+#
+# ADD THESE SECRETS IN GITHUB UI:
+#   SUPERADMIN_USER, SUPERADMIN_PASS
+#   CLIENTADMIN_USER, CLIENTADMIN_PASS
+#   ESS_USER, ESS_PASS
+#   EXPECTED_ENV_URL
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Playwright BDD Tests
+
+on:
+  push:
+    branches: [main]         # smoke runs automatically on every push to main
+  pull_request:
+    branches: [main]         # smoke runs automatically on every PR to main
+  workflow_dispatch:         # manual trigger from GitHub UI
+    inputs:
+      job:
+        description: 'Which job to run manually'
+        default: 'smoke'
+        type: choice
+        options: [smoke, regression]   # sanity: add here when sanity project is ready
+
+jobs:
+
+  # ── Job 1: Smoke Tests (fast-fail gate) ──────────────────────────────────────
+  # Runs on: every push, every PR, and every manual trigger
+  # This is the only job that runs automatically right now
+  smoke:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: npm           # uses package-lock.json hash — restores node_modules from cache
+      - run: npm ci            # strict install from lock file — never drifts
+      - run: npx playwright install chromium --with-deps   # installs browser + OS deps
+      - run: npx bddgen        # generates .features-gen/*.spec.js from .feature files
+      - name: Run smoke tests
+        run: npx playwright test --project=smoke
+        env:
+          CI: true
+          ENV:              dev
+          SUPERADMIN_USER:  ${{ secrets.SUPERADMIN_USER }}
+          SUPERADMIN_PASS:  ${{ secrets.SUPERADMIN_PASS }}
+          CLIENTADMIN_USER: ${{ secrets.CLIENTADMIN_USER }}
+          CLIENTADMIN_PASS: ${{ secrets.CLIENTADMIN_PASS }}
+          ESS_USER:         ${{ secrets.ESS_USER }}
+          ESS_PASS:         ${{ secrets.ESS_PASS }}
+          EXPECTED_ENV_URL: ${{ secrets.EXPECTED_ENV_URL }}
+          # AZURE_VAULT_URL: ${{ secrets.AZURE_VAULT_URL }}   # uncomment when using Azure Key Vault
+
+      # ── Report upload — always runs even if tests fail ──────────────────────
+      - uses: actions/upload-artifact@v4.6.2
+        if: always()
+        with:
+          name: smoke-report-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 14
+
+      # ── Traces — only uploaded when tests fail, for debugging ───────────────
+      - uses: actions/upload-artifact@v4.6.2
+        if: failure()
+        with:
+          name: smoke-traces-${{ github.run_number }}
+          path: test-results/
+          retention-days: 7
+
+  # ── Job 2: Regression with sharding (only if smoke passes) ───────────────────
+  # CURRENTLY DISABLED — only runs when manually triggered with job=regression
+  # To enable on every push later: remove the 'if' condition below
+  regression:
+    name: Regression Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+    needs: smoke            # waits for smoke job — only runs if smoke passes
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.job == 'regression'
+    # ↑ COMMENT THIS LINE OUT when you want regression to run automatically on push
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false      # all shards run even if one fails — collect full results
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      # - run: npx playwright install firefox --with-deps   # uncomment for multi-browser regression
+      - run: npx bddgen
+      - name: Run regression shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test --project=regression-chrome --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        # ↑ change to --project=regression-firefox for Firefox shard when ready
+        env:
+          CI: true
+          ENV:              dev
+          SUPERADMIN_USER:  ${{ secrets.SUPERADMIN_USER }}
+          SUPERADMIN_PASS:  ${{ secrets.SUPERADMIN_PASS }}
+          CLIENTADMIN_USER: ${{ secrets.CLIENTADMIN_USER }}
+          CLIENTADMIN_PASS: ${{ secrets.CLIENTADMIN_PASS }}
+          ESS_USER:         ${{ secrets.ESS_USER }}
+          ESS_PASS:         ${{ secrets.ESS_PASS }}
+          EXPECTED_ENV_URL: ${{ secrets.EXPECTED_ENV_URL }}
+
+      # Upload shard blob report for merging in Job 3
+      - uses: actions/upload-artifact@v4.6.2
+        if: always()
+        with:
+          name: blob-report-shard-${{ matrix.shardIndex }}
+          path: blob-report/
+          retention-days: 3
+
+  # ── Job 3: Merge shard reports ────────────────────────────────────────────────
+  # CURRENTLY DISABLED — only runs when regression runs (which is manual-only for now)
+  merge-reports:
+    name: Merge Reports
+    needs: regression
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.job == 'regression'
+    # ↑ COMMENT THIS LINE OUT when regression is enabled automatically
+    # Note: keeping always() below for when this re-enables — runs even if some shards failed
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Download all shard reports
+        uses: actions/download-artifact@v4.3.0
+        with:
+          path: all-blob-reports
+          pattern: blob-report-shard-*
+          merge-multiple: true
+      - name: Merge reports
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: playwright-report-merged-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 14
+
+  # ── Job 4: Quarantine (never fails build) ─────────────────────────────────────
+  # CURRENTLY DISABLED — uncomment 'needs' and remove the if condition when ready
+  # Quarantine = flaky or WIP tests that should run but never block the pipeline
+  quarantine:
+    name: Quarantine Tests
+    # needs: smoke            # uncomment when enabling — runs after smoke passes
+    if: false                 # DISABLED — change to: needs: smoke and remove this line to enable
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true   # this job NEVER fails the overall workflow even when re-enabled
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: npx bddgen
+      - name: Run quarantine tests
+        run: npx playwright test --project=quarantine || true   # || true = never fail
+        env:
+          CI: true
+          ENV:              dev
+          SUPERADMIN_USER:  ${{ secrets.SUPERADMIN_USER }}
+          SUPERADMIN_PASS:  ${{ secrets.SUPERADMIN_PASS }}
+          CLIENTADMIN_USER: ${{ secrets.CLIENTADMIN_USER }}
+          CLIENTADMIN_PASS: ${{ secrets.CLIENTADMIN_PASS }}
+          ESS_USER:         ${{ secrets.ESS_USER }}
+          ESS_PASS:         ${{ secrets.ESS_PASS }}
+          EXPECTED_ENV_URL: ${{ secrets.EXPECTED_ENV_URL }}

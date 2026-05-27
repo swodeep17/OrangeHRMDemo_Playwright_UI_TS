@@ -1,0 +1,15 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  playwright-tests:
+    build: .
+    environment:
+      - CI=true
+      - ENV=dev
+      - SUPERADMIN_USER=${SUPERADMIN_USER}
+      - SUPERADMIN_PASS=${SUPERADMIN_PASS}
+    volumes:
+      # Mount test results OUT of the container so you can see the HTML report
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
